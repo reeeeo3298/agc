@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/','AgcController@index');
+Route::get('/login','AgcController@login');
+Route::get('/import','AgcController@import_index');
+Route::post('/data_import','AgcController@import_input');

@@ -1,0 +1,546 @@
+@charset "utf-8";
+body{
+    font-family: 'Lato', 'Noto Sans JP', '游ゴシック Medium', '游ゴシック体', 'Yu Gothic Medium', YuGothic, 'ヒラギノ角ゴ ProN', 'Hiragino Kaku Gothic ProN', 'メイリオ', Meiryo, 'ＭＳ Ｐゴシック', 'MS PGothic', sans-serif !important;
+    margin: 0 auto;
+}
+
+header{
+    border-bottom: 2px solid;
+    border-color: #ddd;
+    background-color: #323232;
+    position: relative;
+    width: 100%;
+    /*min-width: 1030px;*/
+    height: 80px;
+    .header-block {
+        width: 80%;
+        margin: 0 auto;
+        display: block;
+        position: relative;
+        top: 20%;
+      h1{
+        width: 110px;
+        margin: 0;
+        display: inline-block;
+        a{
+          display:block;
+          img{
+              width: 100%;
+          }
+        }
+      }
+      .header_nav{
+        display: inline-block;
+        list-style: none;
+        position: relative;
+        top: 15px;
+        li{
+          float: left;
+          color: white;
+          margin-left: 2em;
+          margin-right: 2em;
+          font-size: 17px;
+          a{
+            color: white;
+            &:hover{
+              color: #4c81b3;
+              // border-bottom: solid 1px #4c81b3;
+            }
+          }
+        }
+        li.contact_menu{
+            ul.contact_submenu{
+                display: none;
+                position: absolute;
+                top: 22px;
+                right: -118px;
+                background-color: #323232;
+                padding-bottom: 8px;
+                list-style: none;
+                padding-left: 0;
+                z-index: 11;
+                padding-top: 20px;
+                li{
+                    display: block;
+                    float: none!important;
+                    margin-top: 0.5em;
+                    margin-bottom: 0.5em;
+                    span{
+                        margin-left:1em;
+                    }
+                }
+            }
+            &:hover ul{
+                display: block;
+            }
+        }
+      }
+    }
+    .agency_info{
+      display: inline-block;
+      float: right;
+      .agency{
+        display: block;
+        position: absolute;
+        right: 110px;
+        top: 0;
+        background-color: gray;
+        height: 100%;
+        width: 8%;
+        img{
+          z-index: 1;
+          position: absolute;
+          top: 6px;
+          left: 0;
+          right: 0;
+          margin: 0 auto;
+          width: 40px;
+        }
+        p{
+          color: white;
+          position: relative;
+          top: 40%;
+          text-align: center;
+        }
+      }
+      a{
+        text-decoration: none;
+        .logout-btn{
+          display: inline-block;
+          color: white;
+          position: absolute;
+          right: 0;
+          top: 0;
+          background-color: #b24141;
+          height: 100%;
+        p{
+          color: white;
+          position: relative;
+          top: 30px;
+          padding: 0 20px 0px 20px;
+        }
+      }
+    }
+  }
+}
+
+/*メインメニュー*/
+.container-fluid{
+    margin-top: 60px;
+    .menu-txt{
+        text-align: center;
+        font-size: 41px;
+    }
+    .menu-block{
+        border: solid 3px;
+        border-radius: 11px;
+        width: 65%;
+        margin: 0 auto;
+        margin-top: 20px;
+        .menu-list{
+            list-style: none;
+            padding: 0 0 30px 0;
+            padding-top: 15px;
+            width: 100%;
+            margin: 0 auto;
+            text-align: center;
+            .menu-item{
+                display: inline-block;
+                border: solid 5px;
+                border-radius: 124px;
+                width: 145px;
+                height: 145px;
+                position: relative;
+                margin-left: 3em;
+                margin-right: 3em;
+                margin-top: 2em;
+                a{
+                    color: #4b4b4b;
+                    display: block;
+                    width: 100%;
+                    height: 100%;
+                    span{
+                        position: absolute;
+                        top: 100px;
+                        left: 0px;
+                        font-size: 15px;
+                        width: 100%;
+                    }
+                }
+                @media only screen and (max-width: 1140px ) {
+                    margin-left: 1em;
+                    margin-right: 1em;
+                  }
+            }
+            #customer{
+                a{
+                    content: '';
+                    background: url('/Agc/public/images/customer_icon.png') no-repeat;
+                    position: absolute;
+                    height: 100%;
+                    width: 100%;
+                    background-position-x: 50%;
+                    background-position-y: 40%;
+                    &:hover{
+                        background: url('/Agc/public/images/customer_icon_sub.png') no-repeat;
+                        background-position-x: 50%;
+                        background-position-y: 40%;
+                    }
+                }
+            }
+            #import{
+                a{
+                    content: '';
+                    background: url('/Agc/public/images/import_icon.png') no-repeat;
+                    position: absolute;
+                    height: 100%;
+                    width: 100%;
+                    background-position-x: 50%;
+                    background-position-y: 40%;
+                    &:hover{
+                        background: url('/Agc/public/images/import_icon_sub.png') no-repeat;
+                        background-position-x: 50%;
+                        background-position-y: 40%;
+                    }
+                }
+            }
+            #faq{
+                a{
+                    content: '';
+                    background: url('/Agc/public/images/faq_icon.png') no-repeat;
+                    position: absolute;
+                    height: 100%;
+                    width: 100%;
+                    background-position-x: 50%;
+                    background-position-y: 40%;
+                    &:hover{
+                        background: url('/Agc/public/images/faq_icon_sub.png') no-repeat;
+                        background-position-x: 50%;
+                        background-position-y: 40%;
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+/*タブ切り替え全体のスタイル*/
+.tabs {
+  margin-top: 50px;
+  padding-bottom: 40px;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  margin: 0 auto;
+  margin-bottom: 50px;
+}
+
+/*タブのスタイル*/
+.tab_item {
+  width: calc(100%/2);
+  height: 50px;
+  border-bottom: 3px solid #bd5a5a;
+  background-color: #d9d9d9;
+  line-height: 50px;
+  font-size: 16px;
+  text-align: center;
+  color: #565656;
+  display: block;
+  float: left;
+  text-align: center;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+.tab_item:hover {
+  opacity: 0.75;
+}
+
+/*ラジオボタンを全て消す*/
+input[name="tab_item"] {
+  display: none;
+}
+
+/*タブ切り替えの中身のスタイル*/
+.tab_content {
+  display: none;
+  padding: 40px 40px 0;
+  clear: both;
+  overflow: hidden;
+}
+
+
+/*選択されているタブのコンテンツのみを表示*/
+#all_graph:checked ~ #all_graph,
+#graph_detail:checked ~ #graph_detail{
+  display: block;
+}
+
+/*選択されているタブのスタイルを変える*/
+.tabs input:checked + .tab_item {
+  background-color: #bd5a5a;
+  color: #fff;
+}
+
+.container{
+  width: 100%;
+  position: relative;
+  h1{
+      width: 100%;
+      margin: auto;
+      margin-top: 30px;
+      padding-bottom: 45px;
+      text-align: center;
+  }
+  .supply_now_box{
+    text-align: center;
+    padding-bottom: 30px;
+    p{
+      font-size: 6em;
+    }
+  }
+  .row_first{
+    .col-md-11.col-md-offset {
+      width: 100%;
+      margin: 0 auto;
+    }
+  }
+  .row_second_channel{
+    .panel-default>.panel-heading {
+      border-top: solid 0.5px #ddd;
+    }
+    .col-md-11.col-md-offset {
+      width: 50%;
+      margin: 0 auto;
+      display: inline-block;
+    }
+  }
+  .row_second_area{
+    .panel-default>.panel-heading {
+      border-top: solid 0.5px #ddd;
+      border-left: solid 1px #ddd;
+    }
+    .col-md-11.col-md-offset {
+      width: 50%;
+      margin: 0 auto;
+      display: inline-block;
+      .panel{
+        div#container_second_area {
+            border-left: solid 1px #ddd;
+        }
+      }
+    }
+  }
+  .row_third{
+    .panel-default>.panel-heading {
+      color: #333;
+      background-color: #f5f5f5;
+      border-color: #ddd;
+      border-top: solid 0.2px #ddd;
+    }
+    form#data_search {
+    text-align: center;
+    }
+    .col-md-11.col-md-offset {
+      width: 100%;
+      margin: 0 auto;
+      .search_form1{
+        width: 33%;
+        display: inline-block;
+        label{
+          width: 26%;
+          text-align: center;
+        }
+        select.form-control.month_box {
+            width: 60%;
+        }
+      }
+      .search_form2{
+          width: 40%;
+          display: inline-block;
+          label{
+              width: 26%;
+              text-align: center;
+          }
+          select.form-control.area_box {
+              width: 40%;
+          }
+      }
+      .form-group {
+          text-align: center;
+          margin-top: 22px;
+          display: inline-block;
+          position: relative;
+          top: -4px;
+          left: -90px;
+      }
+    }
+  }
+}
+
+#graph_detail{
+  .search_block{
+    .panel-body{
+      background-color: #efefef;
+      .form-group {
+        margin-bottom: 5px;
+        .col-sm-2 {
+          position: relative;
+          top: 8px;
+        }
+        .item-width{
+          width: 100%!important;
+        }
+      }
+      .btn_block {
+        text-align: center;
+        padding: 25px 0px 25px 0px;
+      }
+    }
+  }
+}
+.confirm_btn{
+    text-align: center;
+}
+#confirm_modal{
+    .modal-dialog{
+        width:80%;
+        .modal-content{
+            position: relative;
+            top: 185px;
+            padding: 15px 0px 25px 0px;
+            h3{
+                text-align: center;
+                padding-bottom: 10px;
+            }
+            .table-condensed{
+                tr{
+                    td:nth-child(1){
+                        width: 20%;
+                        text-align: center;
+                        vertical-align: middle;
+                        background-color: #295890;
+                        color:white;
+                    }
+                    td:nth-child(2){
+                        width: 80%;
+                        padding: 20px;
+                        background-color: #f8f8f8;
+                    }
+                }
+            }
+            .sub_btn{
+                text-align: center;
+            }
+        }
+    }
+    display: none;
+    width: 80%;
+    margin: 0 auto;
+}
+
+.contact_manegement_block{
+    .col-sm-3{
+        position: relative;
+        top: 10px;
+    }
+    .btn_block{
+        text-align: center;
+    }
+}
+.content_list{
+    td.content{
+        width: 300px;
+        p{
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            overflow: hidden;
+        }
+    }
+}
+#detail_modal,#answer_modal{
+    .modal-dialog{
+        width:80%;
+        .modal-content{
+            position: relative;
+            top: 100px;
+            padding: 15px 0px 25px 0px;
+            h3{
+                text-align: center;
+                padding-bottom: 10px;
+            }
+            .table-condensed{
+                tr{
+                    td:nth-child(1){
+                        width: 20%;
+                        text-align: center;
+                        vertical-align: middle;
+                        background-color: #295890;
+                        color:white;
+                    }
+                    td:nth-child(2){
+                        width: 80%;
+                        padding: 20px;
+                        background-color: #f8f8f8;
+                    }
+                }
+            }
+            .btn_group{
+                text-align: center;
+                div{
+                    display: inline-block;
+                    padding: 0px 1em 0px 1em;
+                }
+            }
+            
+        }
+    }
+    display: none;
+    width: 80%;
+    margin: 0 auto;
+}
+
+.faq_block{
+    .col-sm-3{
+        position: relative;
+        top: 10px;
+    }
+    .btn_block{
+        text-align: center;
+    }
+    input#faq_item {
+        width: 100%;
+    }
+    .confirm_btn_block.button_area{
+        display: inline-block;
+        float: left;
+    }
+}
+.faq_list{
+    td.btn_group {
+        width: 4%;
+    }
+    .button_area{
+        display: inline-block;
+        float: left;
+        .edit_btn{
+            margin-left:1em;
+        }
+    }
+}
+#answer_modal{
+    .modal-dialog{
+        position: relative;
+        top: 180px;
+        .modal-content{
+            h3{
+                text-align: center;
+            }
+        }
+    }
+}
+.soumu-block{
+    width: 80%;
+    margin: 0 auto;
+}

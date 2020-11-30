@@ -1,0 +1,30 @@
+$('.menu-item#customer').hover(
+  function(){
+      $(this).css('border-color','#2D92C2');
+      $(this).find('span').css('color','#2D92C2');
+  },
+  function(){
+      $(this).css('border-color','');
+      $(this).find('span').css('color','');
+  }
+);
+$('.menu-item#import').hover(
+  function(){
+      $(this).css('border-color','#DE6F0A');
+      $(this).find('span').css('color','#DE6F0A');
+  },
+  function(){
+      $(this).css('border-color','');
+      $(this).find('span').css('color','');
+  }
+);
+$('.menu-item#faq').hover(
+  function(){
+      $(this).css('border-color','#24a514');
+      $(this).find('span').css('color','#24a514');
+  },
+  function(){
+      $(this).css('border-color','');
+      $(this).find('span').css('color','');
+  }
+);
