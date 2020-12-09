@@ -224,66 +224,8 @@ header{
     }
 }
 
-
-/*タブ切り替え全体のスタイル*/
-.tabs {
-  margin-top: 50px;
-  padding-bottom: 40px;
-  background-color: #fff;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-  width: 100%;
-  margin: 0 auto;
-  margin-bottom: 50px;
-}
-
-/*タブのスタイル*/
-.tab_item {
-  width: calc(100%/2);
-  height: 50px;
-  border-bottom: 3px solid #bd5a5a;
-  background-color: #d9d9d9;
-  line-height: 50px;
-  font-size: 16px;
-  text-align: center;
-  color: #565656;
-  display: block;
-  float: left;
-  text-align: center;
-  font-weight: bold;
-  transition: all 0.2s ease;
-}
-.tab_item:hover {
-  opacity: 0.75;
-}
-
-/*ラジオボタンを全て消す*/
-input[name="tab_item"] {
-  display: none;
-}
-
-/*タブ切り替えの中身のスタイル*/
-.tab_content {
-  display: none;
-  padding: 40px 40px 0;
-  clear: both;
-  overflow: hidden;
-}
-
-
-/*選択されているタブのコンテンツのみを表示*/
-#all_graph:checked ~ #all_graph,
-#graph_detail:checked ~ #graph_detail{
-  display: block;
-}
-
-/*選択されているタブのスタイルを変える*/
-.tabs input:checked + .tab_item {
-  background-color: #bd5a5a;
-  color: #fff;
-}
-
 .container{
-  width: 100%;
+  width: 90%;
   position: relative;
   h1{
       width: 100%;
@@ -378,6 +320,21 @@ input[name="tab_item"] {
   }
 }
 
+.customer_manegement_block{
+    .col-sm-3{
+        display: block;
+        position: relative;
+        top: 10px;
+        font-weight: bold;
+    }
+    .btn_block{
+        text-align: center;
+    }
+    input#supply_no {
+      width: 100%!important;
+    }
+}
+
 #graph_detail{
   .search_block{
     .panel-body{
@@ -408,7 +365,7 @@ input[name="tab_item"] {
         .modal-content{
             position: relative;
             top: 185px;
-            padding: 15px 0px 25px 0px;
+            padding: 0;
             h3{
                 text-align: center;
                 padding-bottom: 10px;
@@ -448,7 +405,15 @@ input[name="tab_item"] {
         text-align: center;
     }
 }
+
+.middle_block{
+    li.page-item, span.page-link {
+        display: none !important;
+    }
+}
+
 .content_list{
+    margin-top: 15px;
     td.content{
         width: 300px;
         p{
@@ -462,38 +427,54 @@ input[name="tab_item"] {
 #detail_modal,#answer_modal{
     .modal-dialog{
         width:80%;
+        margin-top: 0;
         .modal-content{
             position: relative;
-            top: 100px;
-            padding: 15px 0px 25px 0px;
+            top: 50px;
+            padding: 0;
             h3{
                 text-align: center;
                 padding-bottom: 10px;
             }
-            .table-condensed{
-                tr{
-                    td:nth-child(1){
-                        width: 20%;
-                        text-align: center;
-                        vertical-align: middle;
-                        background-color: #295890;
-                        color:white;
-                    }
-                    td:nth-child(2){
-                        width: 80%;
-                        padding: 20px;
-                        background-color: #f8f8f8;
-                    }
-                }
+            .edit_btn{
+                position: absolute;
+                top: 20px;
+                right: 15px;
             }
-            .btn_group{
+            .edit_btn_submit{
+                display: none;
+                position: absolute;
+                top: 20px;
+                right: 15px;
+            }
+           .btn_group{
                 text-align: center;
                 div{
                     display: inline-block;
                     padding: 0px 1em 0px 1em;
                 }
             }
-            
+            .input_max{
+                width: 90%;
+            }
+            .input_harf{
+                width: 45%;
+            }
+            .input_pref{
+                width: 10%;
+            }
+            .input_city{
+                width: 15%;
+            }
+            .input_short{
+                width: 25%;
+            }
+            .input_add_no{
+                width: 14%;
+            }
+            .detail_edit{
+                display: none;
+            }
         }
     }
     display: none;

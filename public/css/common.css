@@ -181,58 +181,8 @@ header {
           background-position-x: 50%;
           background-position-y: 40%; }
 
-/*タブ切り替え全体のスタイル*/
-.tabs {
-  margin-top: 50px;
-  padding-bottom: 40px;
-  background-color: #fff;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-  width: 100%;
-  margin: 0 auto;
-  margin-bottom: 50px; }
-
-/*タブのスタイル*/
-.tab_item {
-  width: calc(100%/2);
-  height: 50px;
-  border-bottom: 3px solid #bd5a5a;
-  background-color: #d9d9d9;
-  line-height: 50px;
-  font-size: 16px;
-  text-align: center;
-  color: #565656;
-  display: block;
-  float: left;
-  text-align: center;
-  font-weight: bold;
-  transition: all 0.2s ease; }
-
-.tab_item:hover {
-  opacity: 0.75; }
-
-/*ラジオボタンを全て消す*/
-input[name="tab_item"] {
-  display: none; }
-
-/*タブ切り替えの中身のスタイル*/
-.tab_content {
-  display: none;
-  padding: 40px 40px 0;
-  clear: both;
-  overflow: hidden; }
-
-/*選択されているタブのコンテンツのみを表示*/
-#all_graph:checked ~ #all_graph,
-#graph_detail:checked ~ #graph_detail {
-  display: block; }
-
-/*選択されているタブのスタイルを変える*/
-.tabs input:checked + .tab_item {
-  background-color: #bd5a5a;
-  color: #fff; }
-
 .container {
-  width: 100%;
+  width: 90%;
   position: relative; }
   .container h1 {
     width: 100%;
@@ -297,6 +247,16 @@ input[name="tab_item"] {
       top: -4px;
       left: -90px; }
 
+.customer_manegement_block .col-sm-3 {
+  display: block;
+  position: relative;
+  top: 10px;
+  font-weight: bold; }
+.customer_manegement_block .btn_block {
+  text-align: center; }
+.customer_manegement_block input#supply_no {
+  width: 100% !important; }
+
 #graph_detail .search_block .panel-body {
   background-color: #efefef; }
   #graph_detail .search_block .panel-body .form-group {
@@ -322,7 +282,7 @@ input[name="tab_item"] {
     #confirm_modal .modal-dialog .modal-content {
       position: relative;
       top: 185px;
-      padding: 15px 0px 25px 0px; }
+      padding: 0; }
       #confirm_modal .modal-dialog .modal-content h3 {
         text-align: center;
         padding-bottom: 10px; }
@@ -345,42 +305,61 @@ input[name="tab_item"] {
 .contact_manegement_block .btn_block {
   text-align: center; }
 
-.content_list td.content {
-  width: 300px; }
-  .content_list td.content p {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    overflow: hidden; }
+.middle_block li.page-item, .middle_block span.page-link {
+  display: none !important; }
+
+.content_list {
+  margin-top: 15px; }
+  .content_list td.content {
+    width: 300px; }
+    .content_list td.content p {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      overflow: hidden; }
 
 #detail_modal, #answer_modal {
   display: none;
   width: 80%;
   margin: 0 auto; }
   #detail_modal .modal-dialog, #answer_modal .modal-dialog {
-    width: 80%; }
+    width: 80%;
+    margin-top: 0; }
     #detail_modal .modal-dialog .modal-content, #answer_modal .modal-dialog .modal-content {
       position: relative;
-      top: 100px;
-      padding: 15px 0px 25px 0px; }
+      top: 50px;
+      padding: 0; }
       #detail_modal .modal-dialog .modal-content h3, #answer_modal .modal-dialog .modal-content h3 {
         text-align: center;
         padding-bottom: 10px; }
-      #detail_modal .modal-dialog .modal-content .table-condensed tr td:nth-child(1), #answer_modal .modal-dialog .modal-content .table-condensed tr td:nth-child(1) {
-        width: 20%;
-        text-align: center;
-        vertical-align: middle;
-        background-color: #295890;
-        color: white; }
-      #detail_modal .modal-dialog .modal-content .table-condensed tr td:nth-child(2), #answer_modal .modal-dialog .modal-content .table-condensed tr td:nth-child(2) {
-        width: 80%;
-        padding: 20px;
-        background-color: #f8f8f8; }
+      #detail_modal .modal-dialog .modal-content .edit_btn, #answer_modal .modal-dialog .modal-content .edit_btn {
+        position: absolute;
+        top: 20px;
+        right: 15px; }
+      #detail_modal .modal-dialog .modal-content .edit_btn_submit, #answer_modal .modal-dialog .modal-content .edit_btn_submit {
+        display: none;
+        position: absolute;
+        top: 20px;
+        right: 15px; }
       #detail_modal .modal-dialog .modal-content .btn_group, #answer_modal .modal-dialog .modal-content .btn_group {
         text-align: center; }
         #detail_modal .modal-dialog .modal-content .btn_group div, #answer_modal .modal-dialog .modal-content .btn_group div {
           display: inline-block;
           padding: 0px 1em 0px 1em; }
+      #detail_modal .modal-dialog .modal-content .input_max, #answer_modal .modal-dialog .modal-content .input_max {
+        width: 90%; }
+      #detail_modal .modal-dialog .modal-content .input_harf, #answer_modal .modal-dialog .modal-content .input_harf {
+        width: 45%; }
+      #detail_modal .modal-dialog .modal-content .input_pref, #answer_modal .modal-dialog .modal-content .input_pref {
+        width: 10%; }
+      #detail_modal .modal-dialog .modal-content .input_city, #answer_modal .modal-dialog .modal-content .input_city {
+        width: 15%; }
+      #detail_modal .modal-dialog .modal-content .input_short, #answer_modal .modal-dialog .modal-content .input_short {
+        width: 25%; }
+      #detail_modal .modal-dialog .modal-content .input_add_no, #answer_modal .modal-dialog .modal-content .input_add_no {
+        width: 14%; }
+      #detail_modal .modal-dialog .modal-content .detail_edit, #answer_modal .modal-dialog .modal-content .detail_edit {
+        display: none; }
 
 .faq_block .col-sm-3 {
   position: relative;
