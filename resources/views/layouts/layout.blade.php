@@ -20,17 +20,14 @@
                     </a>
                 </h1>
                 <ul class="header_nav">
-<!--                  <li><a href="Lpioportal/electrical/">でんき</a></li>
-                  <li><a href="Lpioportal/gas/">ガス</a></li>
-                  <li><a href="Lpioportal/import/">csvインポート</a></li>
-                  <li><a href="Lpioportal/faq/">社内FAQ</a></li>
-                   <li><a href="Lpioportal/soumu/">人事・総務</a></li>
+                  <li><a href="/Agc/customer/">顧客管理</a></li>
+                  <li><a href="Lpioportal/gas/">データ連携</a></li>
                   <li class="contact_menu"><a href="#">問い合わせ</a>
                       <ul class="contact_submenu">
                           <li><a href="/Lpioportal/contact">問い合わせフォーム　></a></li>
                           <li><a href="/Lpioportal/contact_management">問い合わせ管理画面　></a></li>
                       </ul>
-                  </li>-->
+                  </li>
                 </ul>
             </div>
             <div class="agency_info">
@@ -57,6 +54,8 @@
         <script src="https://code.highcharts.com/highcharts.js"></script>
         <script src="https://code.highcharts.com/modules/exporting.js"></script>
         <script type="text/javascript" src="public/js/common.js"></script>
+        <script type="text/javascript" src="public/js/plugin/moment-with-locales.min.js"></script>
+        <script type="text/javascript" src="public/js/plugin/daterangepicker.js"></script>
         @yield('pageJs')
     </body>
 </html>
