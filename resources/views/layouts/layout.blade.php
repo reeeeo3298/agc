@@ -21,13 +21,12 @@
                 </h1>
                 <ul class="header_nav">
                   <li><a href="/Agc/customer/">顧客管理</a></li>
-                  <li><a href="Lpioportal/gas/">データ連携</a></li>
-                  <li class="contact_menu"><a href="#">問い合わせ</a>
-                      <ul class="contact_submenu">
-                          <li><a href="/Lpioportal/contact">問い合わせフォーム　></a></li>
-                          <li><a href="/Lpioportal/contact_management">問い合わせ管理画面　></a></li>
-                      </ul>
-                  </li>
+                  <li><a href="/Agc/import/">データ連携</a></li>
+                  <li><a href="/Agc/faq">よくある質問</a></li>
+                  @if(Session::has('admin_flg'))
+                  <li><a href="/Agc/agency_master">代理店マスタ</a></li>
+                  <li><a href="/Agc/update">データ更新画面</a></li>
+                  @endif
                 </ul>
             </div>
             <div class="agency_info">
