@@ -28,14 +28,50 @@ $('.menu-item#faq').hover(
       $(this).find('span').css('color','');
   }
 );
+$('.menu-item#agency_master').hover(
+  function(){
+      $(this).css('border-color','#1e5da3');
+      $(this).find('span').css('color','#1e5da3');
+  },
+  function(){
+      $(this).css('border-color','');
+      $(this).find('span').css('color','');
+  }
+);
+$('.menu-item#update_menu').hover(
+  function(){
+      $(this).css('border-color','#1e5da3');
+      $(this).find('span').css('color','#1e5da3');
+  },
+  function(){
+      $(this).css('border-color','');
+      $(this).find('span').css('color','');
+  }
+);
 
 $(function(){
+    
+    //代理店セレクトボックスに動的に追加
+    $.ajax({
+        url: 'selectbox_get',
+        type: 'get',
+        headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    }).done(function(data){
+        $.each( data, function( key, value ){
+            $('[name="agency_type"]').append(
+                    $("<option>").val(data[key]['agency_cd']).text(data[key]['agency_name'])
+                    );
+        });
+    });
 
     
 //    詳細ボタン押下
     $('.detail_btn').on('click',function(){
         
         var no = $(this).closest('tr').data('no'); 
+        var agnecy_cd_data = $(this).closest('tr').data('agency_cd'); 
         
 //        alert(no);
         
@@ -47,7 +83,8 @@ $(function(){
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             data: {
-                'no': no
+                'no': no,
+                'agency_cd_data': agnecy_cd_data
             }
         }).done(function(data){
             
@@ -163,16 +200,18 @@ $(function(){
         }                
     });
     
-//    都市ガス詳細ボタン押下
-    $('.detail_citygas_btn').on('click',function(){
+    
+    /**
+     * 代理店マスタ画面
+     */
+    //    詳細ボタン押下
+    $('.agency_detail_btn').on('click',function(){
         
         var no = $(this).closest('tr').data('no'); 
-        
-        alert(no);
-        
+
        //ajax処理
         $.ajax({
-            url: '/lpio_upload/data_citygas_detail',
+            url: 'agency_data_detail',
             type: 'get',
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -180,59 +219,47 @@ $(function(){
             data: {
                 'no': no
             }
-        }).done(function(data){            
-            var supply_no = data[0].supply_no === null ? "" : data[0].supply_no;
-            var add_building = data[0].add_building === null ? "" : data[0].add_building;
-            var last_name = data[0].last_name === null ? "" : data[0].last_name;
-            var first_name = data[0].first_name === null ? "" : data[0].first_name;
-            var last_name_kana = data[0].last_name_kana === null ? "" : data[0].last_name_kana;
-            var first_name_kana = data[0].first_name_kana === null ? "" : data[0].first_name_kana;
-            var add_no = data[0].add_no === null ? "" : data[0].add_no;
-            var add_pref = data[0].add_pref === null ? "" : data[0].add_pref;
-            var add_city = data[0].add_city === null ? "" : data[0].add_city;
-            var add_detail = data[0].add_detail === null ? "" : data[0].add_detail;
-            var add_building_no = data[0].add_building_no === null ? '' : data[0].add_building_no;
-            var mail_address = data[0].mail_address === null ? "" : data[0].mail_address;
-            var tel1 = data[0].tel1 === null ? "" : data[0].tel1;
-            var tel2 = data[0].tel2 === null ? "" : data[0].tel2;
-            var tel3 = data[0].tel3 === null ? "" : data[0].tel3;
-            var now_company = data[0].now_company === null ? "" : data[0].now_company;
-            var now_customer_no = data[0].now_customer_no === null ? "" : data[0].now_customer_no;
-            var contracted_capacity = data[0].contracted_capacity === null ? "" : data[0].contracted_capacity;
-            var a_capacity = data[0].a_capacity === null ? "" : data[0].a_capacity;
-            var kva_capacity = data[0].kva_capacity === null ? "" : data[0].kva_capacity;
-            var kw_capacity = data[0].kw_capacity === null ? "" : data[0].kw_capacity;
-            var plan_name = data[0].plan_name === null ? "" : data[0].plan_name;
-            var payment = data[0].payment === null ? "" : data[0].payment;
-            var campaign_cd = data[0].campaign_cd === null ? "" : data[0].campaign_cd;
-            var agency_cd = data[0].agency_cd === null ? "" : data[0].agency_cd;
+        }).done(function(data){
             
-            $('#supply_no_modal').text(supply_no); 
-            $('#name').text(first_name + last_name); 
-            $('#name_kana').text(first_name_kana + last_name_kana); 
-            $('#add_no').text(add_no);
-            $('#address').text(add_pref + add_city + add_detail + add_building + add_building_no);  
-            $('#mail_address_modal').text(mail_address); 
-            $('#tel_number').text(tel1 + tel2 + tel3); 
-            $('#now_company').text(now_company); 
-            $('#now_customer_no').text(now_customer_no); 
-            $('#contracted_capacity').text(contracted_capacity); 
-            $('#a_capacity').text(a_capacity); 
-            $('#kva_capacity').text(kva_capacity); 
-            $('#kw_capacity').text(kw_capacity);
-            $('#plan_name').text(plan_name); 
-            $('#payment').text(payment); 
-            $('#campaign_cd').text(campaign_cd); 
-            $('#agency_cd').text(agency_cd); 
+            var agency_cd = data[0].agency_cd;
+            var agency_name = data[0].agency_name === null ? "" : data[0].agency_name;
+            var agency_password = data[0].password === null ? "" : data[0].password;
             
-            console.log(supply_no);
-            console.log(mail_address);
-        
-            $('#detail_modal').modal('show');
+            $('.modal_table').addClass('accept_no'+data[0].accept_no);
+            $('#agency_cd_modal').text(agency_cd); 
+            $('#agency_name').text(agency_name); 
+            $('#agency_password').text(agency_password); 
+            
+            $('#agency_cd_input').val(agency_cd); 
+            $('#agency_name_input').val(agency_name); 
+            $('#agency_password_input').val(agency_password); 
+            
+            if($('.edit_btn').hasClass('edit_active')){
+                $('.edit_btn').removeClass('edit_active');
+                $('.detail_edit').css('display','none');
+                $('.detail_view').css('display','block');
+                $('.modal_table td').css('display','block');
+                $('.edit_btn').css('display','block');
+                $('.edit_btn_submit').css('display','none');
+            }else{
+                
+            }
+            
+            //モーダル表示
+            $('#agency_detail_modal').modal('show');
+                        
         });
-        
     });
     
+    //代理店追加ボタンモーダル
+    $('.agency_add_btn').on('click',function(){
+       
+        
+        //モーダル表示
+        $('#agency_add_modal').modal('show');
+    });
+    
+        
     $(function(){
       moment.locale("ja");
       $('#upload_date').daterangepicker(
@@ -254,6 +281,24 @@ $(function(){
         startdate = s.format('YYYY-MM-DD');
         enddate = e.format('YYYY-MM-DD');
       });
+    });
+    
+    $('.panel_content h2').click(function(){
+        $(this).next('.panel_inner').slideToggle();
+
+        if ($(this).hasClass('active')) {
+          $(this).removeClass('active');
+          $(this).css({
+            'background-color':''
+          });
+        }else{
+          $(this).addClass('active');
+        }
+    });
+    
+    $('.faq_list dt').click(function(){
+            $(this).next('.answer_item').slideToggle();
+            $(this).toggleClass('open');
     });
     
     //フリガナ自動入力

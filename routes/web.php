@@ -19,11 +19,29 @@ Route::get('/','AgcController@index');
 //ログイン処理
 Route::get('/login','AgcController@login');
 
+//メインメニュー表示
+Route::get('/mainmenu','AgcController@mainmenu_index');
+
 //ログアウト処理
 Route::get('/logout','AgcController@logout');
 
 //データ連携画面表示
 Route::get('/import','AgcController@import_index');
+
+//データ更新画面表示
+Route::get('/update','AgcController@update_index');
+
+//データ更新画面表示
+Route::post('/data_update','AgcController@update_input');
+
+//よくある質問画面表示
+Route::get('/faq','AgcController@faq_index');
+
+//代理店マスタ画面表示
+Route::get('/agency_master','AgcController@agency_master_index');
+
+//代理店マスタ詳細ボタン押下
+Route::get('agency_data_detail','AgcController@agency_detail_index');
 
 //csvインポート処理
 Route::post('/data_import','AgcController@import_input');
@@ -45,3 +63,12 @@ Route::get('/edit','AgcController@edit_index');
 
 //詳細モーダルからの修正ボタン押下
 Route::post('/modal_data_edit','AgcController@modal_data_edit');
+
+//代理店の詳細モーダルからの修正ボタン押下
+Route::post('/agency_modal_data_edit','AgcController@agency_modal_data_edit');
+
+//代理店の追加モーダルからの登録ボタン押下
+Route::post('/agency_modal_data_add','AgcController@agency_modal_data_add');
+
+//セレクトボックスのデータ取得
+Route::get('selectbox_get','AgcController@selectbox_get');

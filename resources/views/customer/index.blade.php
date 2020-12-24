@@ -4,7 +4,7 @@
 @endsection
 
 @section('content')
-<h1>申込情報管理画面</h1>
+<h1>顧客管理画面</h1>
     <!-- フラッシュメッセージ -->
         @if(session()->has('flash_message_success'))
             <div class="alert alert-success mb-3">
@@ -28,7 +28,7 @@
                      </div>
                  </div>
 
-                 <div class="col-sm-6 form_payment">
+                  <div class="col-sm-6 form_payment">
                      <div class="col-sm-3">お支払い方法</div>
                      <div class="col-sm-5 form-inline dropdown" style="padding: 3px;">
                        <select id="select_payment" name="payment" class="form-control">
@@ -77,40 +77,61 @@
              </div>
              <div class="form-group">
                  <div class="col-sm-6 form_status">
-                     <div class="col-sm-3">ステータス</div>
+                     <div class="col-sm-3">swステータス</div>
                      <div class="col-sm-5 form-inline dropdown" style="padding: 3px;">
-                       <select id="select_status" name="status_cd" class="form-control">
+                       <select id="select_status" name="sw_status_cd" class="form-control">
                         <option value="">すべて</option>
-                        <option value="1">未完了</option>
-                        <option value="2">判断待ち</option>
-                        <option value="3">判断済み(NG)</option>
-                        <option value="4">判断済み(OK)</option>
-                        <option value="5">マッチング済み(NG)</option>
-                        <option value="6">マッチング済み(OK)</option>
-                        <option value="7">期限切れ</option>
-                        <option value="8">取消し</option>
-                        <option value="9">完了</option>
+                        <option value="0">未処理</option>
+                        <option value="1">廃止申込待ち</option>
+                        <option value="2">開始申込待ち</option>
+                        <option value="3">契約中に再点申込あり</option>
+                        <option value="4">供給承諾保留中</option>
+                        <option value="5">処理完了</option>
+                        <option value="6">申込処理中</option>
+                        <option value="7">処理完了(計器取替未完了)</option>
+                        <option value="8">却下</option>
+                        <option value="9">確認中</option>
+                        <option value="10">取消し</option>
+                        <option value="11">判断待ち</option>
+                        <option value="12">判断済み(OK)</option>
+                        <option value="13">判断済み(NG)</option>
+                        <option value="14">マッチング済み(NG)</option>
+                        <option value="15">期限切れ</option>
                        </select>
                      </div>
                  </div>
-
-<!--                 <div class="col-sm-6 form_type">
-                     <div class="col-sm-3">供給エリア</div>
+                 <div class="col-sm-6 form_status">
+                     <div class="col-sm-3">業務ステータス</div>
                      <div class="col-sm-5 form-inline dropdown" style="padding: 3px;">
-                       <select id="select_type" name="area_type" class="form-control">
-                         <option value="">すべて</option>
-                         <option value="2">東北</option>
-                         <option value="3">東京</option>
-                         <option value="4">中部</option>
-                         <option value="5">北陸</option>
-                         <option value="6">関西</option>
-                         <option value="7">中国</option>
-                         <option value="8">四国</option>
-                         <option value="9">九州</option>
+                       <select id="select_status" name="gm_status_cd" class="form-control">
+                        <option value="">すべて</option>
+                        <option value="0">未処理</option>
+                        <option value="1">受付</option>
+                        <option value="2">切替手続中</option>
+                        <option value="3">再点手続中</option>
+                        <option value="4">契約中</option>
+                        <option value="5">アンペア変更手続中</option>
+                        <option value="6">需要家情報変更手続中</option>
+                        <option value="7">廃止手続き中</option>
+                        <option value="8">解約</option>
+                        <option value="9">キャンセル</option>
                        </select>
                      </div>
-                 </div>-->
+                 </div>
              </div>
+         
+            @if(Session::has('admin_flg'))
+             <div class="form-group">
+                 <div class="col-sm-6 form_type">
+                     <div class="col-sm-3">代理店コード</div>
+                     <div class="col-sm-5 form-inline dropdown" style="padding: 3px;">
+                       <select id="select_type" name="agency_type" class="form-control">
+                         <option value="">すべて</option>
+                       </select>
+                     </div>
+                 </div>
+             </div>
+            @endif
             
 
              <div class="btn_block">
@@ -126,13 +147,19 @@
                 <button type="submit" class="btn btn-success btn-xm csv_btn">csv出力</button>
             {{ Form::close() }}
         </div>
+        @if(!empty($count))
+        <div class="data_count">
+            <p>全{{$count}}件</p>
+        </div>
+        @endif
     </div>
     <div class="content_list">
         <table class="table table-bordered table-striped">
             <thead>
                 <tr>
                     <th>受付No</th>
-                    <th>ステータス</th>
+                    <th>業務ステータス</th>
+                    <th>swステータス</th>
                     <th>申込日時</th>
                     <th>お客様名</th>
                     <th>電話番号</th>
@@ -147,19 +174,97 @@
             <tbody>
                 @if(!empty($results))
                 @foreach($results as $r)
-                <tr data-no="{{$r->accept_no}}">
+                <tr data-no="{{$r->accept_no}}"  data-agency_cd="{{$r->agency_cd}}">
                     <td class="accept_no"><p>{{$r->accept_no}}</p></td>
                     <td class="status">
                         <p>
-                            @switch($r->status_cd)
+                            @switch($r->gm_status_cd)
                                 @case(0)
-                                    未登録
+                                    未処理
                                     @break
                                 @case(1)
-                                    編集中
+                                    受付
                                     @break
                                 @case(2)
-                                    登録済
+                                    切替手続中
+                                    @break
+                                @case(3)
+                                    再点手続中
+                                    @break
+                                @case(4)
+                                    契約中
+                                    @break
+                                @case(5)
+                                    アンペア変更手続中
+                                    @break
+                                @case(6)
+                                    需要家情報変更手続中
+                                    @break
+                                @case(7)
+                                    廃止手続き中
+                                    @break
+                                @case(8)
+                                    解約
+                                    @break
+                                @case(9)
+                                    キャンセル
+                                    @break
+                            @endswitch
+                        </p>
+                    </td>
+                    <td class="status">
+                        <p>
+                            @switch($r->sw_status_cd)
+                                @case(0)
+                                    未処理
+                                    @break
+                                @case(1)
+                                    廃止申込待ち
+                                    @break
+                                @case(2)
+                                    開始申込待ち
+                                    @break
+                                @case(3)
+                                    契約中に再点申込あり
+                                    @break
+                                @case(4)
+                                    供給承諾保留中
+                                    @break
+                                @case(5)
+                                    処理完了
+                                    @break
+                                @case(6)
+                                    申込処理中
+                                    @break
+                                @case(7)
+                                    処理完了(計器取替未完了)
+                                    @break
+                                @case(8)
+                                    却下
+                                    @break
+                                @case(9)
+                                    確認中
+                                    @break
+                                @case(10)
+                                    取消し
+                                    @break
+                                @case(11)
+                                    判断待ち
+                                    @break
+                                @case(12)
+                                    判断済み(OK)
+                                    @break
+                                @case(13)
+                                    判断済み(NG)
+                                    @break
+                                @case(14)
+                                    マッチング済み(OK)
+                                    @break
+                                @case(15)
+                                    マッチング済み(NG)
+                                    @break
+                                @case(16)
+                                    期限切れ
                                     @break
                             @endswitch
                         </p>
@@ -188,7 +293,7 @@
                 @endif
             </tbody>
         </table>
-            {{ $results->links() }}
+            {{$results->appends(request()->input())->links()}}
     </div>
     <div id="detail_modal" class="modal fade">
         <div class="modal-dialog">

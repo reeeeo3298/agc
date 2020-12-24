@@ -33,6 +33,25 @@ class AgcController extends Controller
     }
     
     /**
+     * メインメニュー画面表示
+     */
+    public function mainmenu_index(Request $request){
+        
+        //代理店毎のデータ取得
+        $agency_cd = $request->session()->get('agency_cd');
+        
+        //セッション切れチェック  
+        if($agency_cd == null){
+            
+            return redirect('/')->with('message','セッション有効期限が切れました。再度ログインし直してください。');
+            
+        }else{                
+            return view('main.index');
+        }
+        
+    }
+    
+    /**
      * ログイン処理
      */
     public function login(Request $request){
@@ -48,7 +67,13 @@ class AgcController extends Controller
         if($result == ''){
             return back()->with('message','代理店コードまたはパスワードが違います。');
         }else{
-            session(['agency_cd' => $result->agency_cd,'agency_name' => $result->agency_name]);
+            
+            //管理者だった場合
+            if($result->agency_cd == 'admin'){
+                session(['agency_cd' => $result->agency_cd,'agency_name' => $result->agency_name,'admin_flg' => 1]);
+            }else{
+                session(['agency_cd' => $result->agency_cd,'agency_name' => $result->agency_name]);
+            }
             
             return view('main.index');
         }
@@ -63,11 +88,85 @@ class AgcController extends Controller
         //代理店毎のデータ取得
         $agency_cd = $request->session()->get('agency_cd');
         
-        $results = $this->data_all($agency_cd);
+        //管理者フラグ取得
+        $admin_flg = $request->session()->get('admin_flg');
         
-//        dd($results);
+        //セッション切れチェック  
+        if($agency_cd == null){
+            
+            return redirect('/')->with('message','セッション有効期限が切れました。再度ログインし直してください。');
+            
+        }else{
+            
+            if($admin_flg === 1){
+                $results = $this->data_all_admin();
+                $count = DB::table('t_data')
+                            ->count();
+            }else{
+                $results = $this->data_all($agency_cd);
+                $count = DB::table('t_data')
+                            ->where('agency_cd',$agency_cd)
+                            ->count();
+            }
                 
-        return view('customer.index',compact('results'));
+            return view('customer.index',compact('results','count'));
+        }
+       
+    }
+    
+    /**
+     * よくある質問画面表示
+     */
+    public function faq_index(Request $request){
+        
+        //代理店毎のデータ取得
+        $agency_cd = $request->session()->get('agency_cd');
+        
+        //セッション切れチェック  
+        if($agency_cd == null){
+            
+            return redirect('/')->with('message','セッション有効期限が切れました。再度ログインし直してください。');
+            
+        }else{                
+            return view('faq.index');
+        }
+       
+    }
+    
+    /**
+     * 代理店マスタ画面表示
+     */
+    public function agency_master_index(Request $request){
+        
+        //代理店毎のデータ取得
+        $agency_cd = $request->session()->get('agency_cd');
+        
+        //セッション切れチェック  
+        if($agency_cd == null){
+            
+            return redirect('/')->with('message','セッション有効期限が切れました。再度ログインし直してください。');
+            
+        }else{
+            
+            $results = DB::table('m_agency')
+                        ->get();
+
+            return view('master.index',compact('results'));
+        }
+    }
+    
+    /**
+     * 代理店詳細ボタン押下
+     */
+    public function agency_detail_index(Request $request){
+        
+        $agency_cd = $request->input('no');
+        
+        $results = DB::table('m_agency')
+                    ->where('agency_cd',$agency_cd)
+                    ->get();
+        
+        return $results;
     }
     
     /**
@@ -76,6 +175,12 @@ class AgcController extends Controller
     public function customer_search(Request $request){
                 
         $all = $request->all();
+        
+        //管理者フラグ取得
+        $admin_flg = $request->session()->get('admin_flg');
+        
+        //代理店コード取得
+        $agency_cd = $request->session()->get('agency_cd');
                 
         //セッション追加
         session(['search_data' => $all]);
@@ -89,7 +194,10 @@ class AgcController extends Controller
         $mail_address = $request->input('mail_address');
         $status_cd = $request->input('status_cd');
         $payment = $request->input('payment');
-                
+        $agency_cd_input = $request->input('agency_type');
+        $sw_status_cd = $request->input('sw_status_cd');
+        $gm_status_cd = $request->input('gm_status_cd');
+                               
         $startdate = substr($upload_date,0,10);
         $enddate = substr($upload_date,13,23);
                         
@@ -119,13 +227,32 @@ class AgcController extends Controller
         if($payment !== null){
             $list->where('td.payment',$payment);
         }
+        if($sw_status_cd !== null){
+            $list->where('td.sw_status_cd',(int)$sw_status_cd);
+        }
+        if($gm_status_cd !== null){
+            $list->where('td.gm_status_cd',(int)$gm_status_cd);
+        }
+        
+        if($admin_flg === 1){
+            if($agency_cd_input !== null){
+                $list->where('td.agency_cd',$agency_cd_input);
+            }
+        }else{
+            $list->where('td.agency_cd',$agency_cd);
+        }
         
         $results = $list->whereBetween('add_date',["$startdate", "$enddate"])
                 ->paginate(30);
         
-//        dd($results);
+        $count = $list->count();
+                
+        //セッション切れチェック
+        if($agency_cd == null){
+            return redirect('/')->with('message','セッション有効期限が切れました。再度ログインし直してください。');   
+        }
         
-        return view('customer.index',compact('results'));
+        return view('customer.index',compact('results','count'));
         
     }
     
@@ -135,13 +262,22 @@ class AgcController extends Controller
     public function detail_index(Request $request){
         
         $accept_no = $request->input('no');
+        $agency_cd_data = $request->input('agency_cd_data');
         $agency_cd = $request->session()->get('agency_cd');
+        $admin_flg = $request->session()->get('admin_flg');
         
-        $results = DB::table('t_data')
-                    ->where('agency_cd',$agency_cd)
-                    ->where('accept_no',$accept_no)
-                    ->get();
-        
+        if($admin_flg === 1){
+            $results = DB::table('t_data')
+                ->where('agency_cd',$agency_cd_data)
+                ->where('accept_no',$accept_no)
+                ->get();
+        }else{
+            $results = DB::table('t_data')
+                ->where('agency_cd',$agency_cd)
+                ->where('accept_no',$accept_no)
+                ->get();
+        }
+                
         return $results;
     }
     
@@ -191,6 +327,47 @@ class AgcController extends Controller
     }
     
     /**
+     * 代理店の詳細モーダル修正ボタン押下
+     */
+    public function agency_modal_data_edit(Request $request){
+        
+        $result = $request->all();
+        $update_dt = Carbon::now();
+                
+        //DB更新
+        DB::table('m_agency')
+                ->where('agency_cd',$result['agency_cd_input'])
+                ->update([
+                    'agency_cd' => $result['agency_cd_input'],
+                    'agency_name' => $result['agency_name_input'],
+                    'password' => $result['agency_password_input'],
+                    'update_dt' => $update_dt
+                ]);
+                
+        return back()->with('flash_message_success', $result['agency_cd_input'].'のデータを更新しました。');
+    }
+    
+    /**
+     * 代理店の追加モーダル登録ボタン押下
+     */
+    public function agency_modal_data_add(Request $request){
+        
+        $result = $request->all();
+        $update_dt = Carbon::now();
+                
+        //DB更新
+        DB::table('m_agency')
+                ->insert([
+                    'agency_cd' => $result['agency_cd_input'],
+                    'agency_name' => $result['agency_name_input'],
+                    'password' => $result['agency_password_input'],
+                    'add_dt' => $update_dt
+                ]);
+                
+        return back()->with('flash_message_success', $result['agency_cd_input'].'を登録しました。');
+    }
+    
+    /**
      * csvダウンロードボタン押下
      */
     public function csv_download_input(Request $request){
@@ -198,13 +375,23 @@ class AgcController extends Controller
         $search_data = $request->session()->get('search_data');
         $agency_cd = $request->session()->get('agency_cd');
         
+        //管理者フラグ取得
+        $admin_flg = $request->session()->get('admin_flg');
+                
         $startdate = substr($search_data['upload_date'],0,10);
         $enddate = substr($search_data['upload_date'],13,23);
         
         if($search_data == null){
-            $results = DB::table('t_data')
+            
+            if($admin_flg === 1){
+                $results = DB::table('t_data')
+                    ->get();
+            }else{
+                $results = DB::table('t_data')
                     ->where('agency_cd',$agency_cd)
                     ->get();
+            }
+            
         }else{
             $results = DB::table('t_data as td');
             
@@ -361,9 +548,16 @@ class AgcController extends Controller
     /**
      * データ連携画面表示
      */
-    public function import_index(){
+    public function import_index(Request $request){
+        
+        $agency_cd = $request->session()->get('agency_cd');
+        
+        $results = DB::table('data_history')
+                    ->where('agency_cd',$agency_cd)
+                    ->orderBy('import_dt','desc')
+                    ->get();
                
-        return view('import.index');
+        return view('import.index',compact('results'));
         
     }
     
@@ -373,10 +567,121 @@ class AgcController extends Controller
     public function import_input(Request $request){
 
       $csv = $request->file('csv_file');
+      $agency_cd = $request->session()->get('agency_cd');
       
-      if(!empty($csv)){//csvが登録されていた場合
+      
+      if(!empty($csv)){//csvが登録されていた場合の処理
+        DB::beginTransaction();
         
-//Goodby CSVのconfig設定
+        try{
+            
+          //csvかどうかの判定
+          $extension = $csv->getClientOriginalExtension();
+          $file_name = $csv->getClientOriginalName();
+
+          if($extension !== 'csv'){
+              throw new Exception("「csv」形式でアップロードしてください。");
+          }
+        
+            //Goodby CSVのconfig設定
+            $config = new LexerConfig();
+            $config
+                ->setIgnoreHeaderLine(true)
+                ->setToCharset("UTF-8")
+                ->setFromCharset("sjis-win");
+            $interpreter = new Interpreter();
+            $lexer = new Lexer($config);
+
+            $rows = array();
+
+            $interpreter->addObserver(function(array $row) use (&$rows) {
+                $rows[] = $row;
+            });
+
+            // CSVデータをパース
+            $lexer->parse($csv, $interpreter);
+            
+            $count = 1;
+            
+            //インサート用データの配列
+            $insert_data = [];
+            $error_data = '';
+                                 
+            foreach ($rows as $row) {
+                                
+                //インポートデータエラーチェック
+                $error_log = $this->validate_csv($row,$count);
+                
+                if(empty($error_log)){
+                    //一度配列に入れる　
+                    $result = $this->get_csv_data($row,$count);
+                    array_push($insert_data,$result);                    
+                }else{
+                    $error_data = $error_data.$error_log;
+                }
+                                    
+                $count++;                             
+            }
+
+            //エラーがあるか判定
+            if(empty($error_data)){
+
+                //t_dataへインサート
+                $this->insert_csv_data($insert_data);
+                
+                //data_historyへインサート
+                $this->insert_csv_success($file_name,$agency_cd);
+                
+            }else{
+
+                //error_logへインサート
+                $this->insert_csv_error($error_data,$file_name,$agency_cd);
+                //catchへ飛ばす
+                throw new Exception("データにエラーがありました。ログをご確認ください。");
+            }
+                        
+            DB::commit();
+            return back()->with('flash_message_success', 'インポート完了しました。');
+            
+        } catch (Exception $ex) {
+            
+            //エラーがあるか判定
+            if(empty($error_data)){
+                DB::rollBack();
+                return back()->with('flash_message_danger',$ex->getMessage());
+            }else{
+                DB::commit();
+                return back()->with('flash_message_danger',$ex->getMessage());
+            }
+
+        }
+        
+          
+      }else{
+        return back()->with('flash_message_danger', 'csvファイルを選択してください。');
+      }
+
+    }
+    
+    /**
+     * データ更新画面表示
+     */
+    public function update_index(){
+               
+        return view('update.index');
+        
+    }
+    
+    /**
+     * データ更新処理
+     */
+    public function update_input(Request $request){
+               
+        $csv = $request->file('csv_update_file');
+              
+        if(!empty($csv)){//csvが登録されていた場合
+        
+        //Goodby CSVのconfig設定
         $config = new LexerConfig();
         $config
             ->setIgnoreHeaderLine(true);
@@ -392,59 +697,90 @@ class AgcController extends Controller
         // CSVデータをパース
         $lexer->parse($csv, $interpreter);
         
-//        $results = array();
+        // $results = array();
                         
         // CSVのデータを配列化
         DB::beginTransaction();
         
         try{
-         
+
             foreach ($rows as $row) {
             
                 //一度配列に入れる
-                $result = $this->get_csv_data($row);
-                
-                //DBへ登録
-                $this->insert_csv_data($result);
-                                 
+                $result = $this->update_csv_data($row);
+                                                               
+                $t_data = DB::table('t_data')
+                            ->where('supply_no',$result['supply_no'])
+                            ->first();
+ 
+                //データがあれば更新
+                if(!empty($t_data)){
+                    
+                //スイッチングステータスコード
+                $sw_status_cd = $this->sw_status($result['sw_status']);
+                                
+                //業務ステータスコード
+                $gm_status_cd = $this->gm_status($result['gm_status']);
+                                                                                        
+                    DB::table('t_data')
+                            ->where('supply_no',$result['supply_no'])
+                            ->update([
+                                'sw_status_cd' => $sw_status_cd,
+                                'gm_status_cd' => $gm_status_cd
+                            ]);
+                    
+                }
+                                    
             }
             
-            //catchへ飛ばす
-//            throw new Exception("エラーです。");
-            
             DB::commit();
-            return back()->with('flash_message_success', 'インポート完了しました。');
+            return back()->with('flash_message_success', '更新完了しました。');
             
         } catch (Exception $ex) {
             
             DB::rollBack();
             return back()->with('flash_message_danger',$ex->getMessage());
         }
-        
           
       }else{
         return back()->with('flash_message_danger', 'csvファイルを選択してください。');
       }
+        
+    }
+    
+    
+    /**
+     * csvエラーチェック
+     */
+    private function validate_csv($result,$count){
 
+        $error_log = '';
+        
+        //メールアドレスチェック
+        if($result[25] === ""){
+            $error_log = $count."行目:メールアドレスが入力されていません。\n";
+        }
+
+        return $error_log;
     }
     
     /**
      * csvデータ取得
      */
-    private function get_csv_data($row)
+    private function get_csv_data($row,$count)
     {
         //受付Noの最大値取得
         $no = DB::table('t_data')
                 ->where('agency_cd',$row[71])
                 ->orderBy('accept_no','desc')
                 ->value('accept_no');
-                        
+                                
         if($no === null){
             $no = 1;
         }else{
-            $no++;
+            $no = $no + $count;
         }
-        
+
         $accept_no = $no;
                         
         $result = array(
@@ -496,14 +832,84 @@ class AgcController extends Controller
         return $result;
     }
     
+    /**
+     * csvデータ取得
+     */
+    private function update_csv_data($row){
+                        
+        $result = array(
+            'supply_no' => $row[5],
+            'agency_cd' => $row[6],
+            'sw_status' => $row[2],
+            'gm_status' => $row[1],
+        );
+        return $result;
+    }
+    
+    
+    /**
+     * エラーログインサート
+     */
+    private function insert_csv_error($error_data,$file_name,$agency_cd){
+                
+        $log_no = DB::table('data_history')
+                    ->where('agency_cd',$agency_cd)
+                    ->max('log_no');
+        
+        $update_dt = Carbon::now();
+        
+        if($log_no === null){
+            $log_no = 1;
+        }else{
+            $log_no = $log_no + 1;
+        }
+//dd($log_no);
+        DB::table('data_history')
+                ->insert([
+                    'log_no'    =>  $log_no,
+                    'file_name' =>  $file_name,
+                    'log_content'   =>  $error_data,
+                    'import_dt'     =>  $update_dt,
+                    'agency_cd'     =>  $agency_cd
+                ]);
+        
+    }
+    
+    /**
+     * インポート成功ログ
+     */
+    private function insert_csv_success($file_name,$agency_cd){
+                
+        $log_no = DB::table('data_history')
+                    ->where('agency_cd',$agency_cd)
+                    ->max('log_no');
+        
+        $update_dt = Carbon::now();
+        
+        if($log_no === null){
+            $log_no = 1;
+        }else{
+            $log_no = $log_no + 1;
+        }
+
+        DB::table('data_history')
+                ->insert([
+                    'log_no'    =>  $log_no,
+                    'file_name' =>  $file_name,
+                    'log_content'   =>  '正常終了',
+                    'import_dt'     =>  $update_dt,
+                    'agency_cd'     =>  $agency_cd
+                ]);
+        
+    }
     
     /**
      * DBインサート
      */
-    private function insert_csv_data($result){
-        
-//        dd($result);
+    private function insert_csv_data($results){
                 
+        foreach($results as $result){
+//            dd($results);
             DB::table('t_data')
                 ->insert([
                     'accept_no' => $result['accept_no'],
@@ -550,8 +956,9 @@ class AgcController extends Controller
                     'campaign_cd' => $result['campaign_cd'],
                     'agency_cd' => $result['agency_cd'],
                     'memo' => $result['memo']
-                ]);
-               
+            ]);
+        }
+                               
     }
     
     /**
@@ -565,6 +972,142 @@ class AgcController extends Controller
         
         return $results;
         
+    }
+    
+    /**
+     * 【管理者用】顧客データ取得
+     */
+    private function data_all_admin(){
+        
+        $results = DB::table('t_data')
+                    ->paginate(30);
+        
+        return $results;
+        
+    }
+    
+    /**
+     * swステータス取得
+     */
+    private function sw_status($sw_status){
+        
+        $sw_status_cd;
+        
+        switch ($sw_status){
+            case '未処理':
+                $sw_status_cd = 0;
+                break;
+            case '廃止申込待ち':
+                $sw_status_cd = 1;
+                break;
+            case '開始申込待ち':
+                $sw_status_cd = 2;
+                break;
+            case '契約中に再点申込あり':
+                $sw_status_cd = 3;
+                break;
+            case '供給承諾保留中':
+                $sw_status_cd = 4;
+                break;
+            case '処理完了':
+                $sw_status_cd = 5;
+                break;
+            case '申込処理中':
+                $sw_status_cd = 6;
+                break;
+            case '処理完了(計器取替未完了)':
+                $sw_status_cd = 7;
+                break;
+            case '却下':
+                $sw_status_cd = 8;
+                break;
+            case '確認中':
+                $sw_status_cd = 9;
+                break;
+            case '取消し':
+                $sw_status_cd = 10;
+                break;
+            case '判断待ち':
+                $sw_status_cd = 11;
+                break;
+            case '判断済み(OK)':
+                $sw_status_cd = 12;
+                break;
+            case '判断済み(NG)':
+                $sw_status_cd = 13;
+                break;
+            case 'マッチング済み(OK)':
+                $sw_status_cd = 14;
+                break;
+            case 'マッチング済み(NG)':
+                $sw_status_cd = 15;
+                break;
+            case '期限切れ':
+                $sw_status_cd = 16;
+                break;
+            default :
+                $sw_status_cd = 0;
+        }
+        
+        return $sw_status_cd;
+        
+    }
+    
+    /**
+     * gmステータス取得
+     */
+    private function gm_status($gm_status){
+        
+        $gm_status_cd;
+        
+        switch ($gm_status){
+            case '未処理':
+                $gm_status_cd = 0;
+                break;
+            case '受付':
+                $gm_status_cd = 1;
+                break;
+            case '切替手続中':
+                $gm_status_cd = 2;
+                break;
+            case '再点手続中':
+                $gm_status_cd = 3;
+                break;
+            case '契約中':
+                $gm_status_cd = 4;
+                break;
+            case 'アンペア変更手続中':
+                $gm_status_cd = 5;
+                break;
+            case '需要家情報変更手続中':
+                $gm_status_cd = 6;
+                break;
+            case '廃止手続き中':
+                $gm_status_cd = 7;
+                break;
+            case '解約':
+                $gm_status_cd = 8;
+                break;
+            case 'キャンセル':
+                $gm_status_cd = 9;
+                break;
+            default :
+                $gm_status_cd = 0;
+        }
+        
+        return $gm_status_cd;
+        
+    }
+    
+    /**
+     * 代理店セレクトボックスのデータ取得
+     */
+    public function selectbox_get(Request $request){
+        
+        $result = DB::table('m_agency')
+                    ->get();
+        
+        return $result;
     }
     
 }

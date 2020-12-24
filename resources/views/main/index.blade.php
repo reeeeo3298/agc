@@ -10,8 +10,15 @@
         <ul class="menu-list">
             <li class="menu-item" id="customer"><a href="/Agc/customer"><span>顧客管理</span></a></li>
             <li class="menu-item" id="import"><a href="/Agc/import"><span>データ連携</span></a></li>
-            <li class="menu-item" id="faq"><a href="/Agc/faq"><span>FAQ</span></a></li>
+            <li class="menu-item" id="faq"><a href="/Agc/faq"><span>よくある質問</span></a></li>
         </ul>
+        @if(Session::has('admin_flg'))
+        <ul class="menu-list menu_second">
+            <li class="menu-item" id="agency_master"><a href="/Agc/agency_master"><span>代理店マスタ</span></a></li>
+            <li class="menu-item" id="update_menu"><a href="/Agc/update"><span>データ更新</span></a></li>
+            <!--<li class="menu-item" id="faq"><a href="/Agc/faq"><span>FAQ</span></a></li>-->
+        </ul>
+        @endif
         <!-- <ul class="menu-list2">
             <li class="menu-item" id="question"><a href="/agency/faq"><span>Q&A</span></a></li>
             <li class="menu-item" id="kiyaku"><a href="public/pdf/affiliate.pdf" target="_blank"><span>規約確認</span></a></li>

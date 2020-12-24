@@ -220,6 +220,43 @@ header{
                     }
                 }
             }
+            #agency_master{
+                a{
+                    content: '';
+                    background: url('/Agc/public/images/agency_master_icon.png') no-repeat;
+                    position: absolute;
+                    height: 100%;
+                    width: 100%;
+                    background-position-x: 50%;
+                    background-position-y: 40%;
+                    &:hover{
+                        background: url('/Agc/public/images/agency_master_icon_sub.png') no-repeat;
+                        background-position-x: 50%;
+                        background-position-y: 40%;
+                    }
+                }
+            }
+            #update_menu{
+                a{
+                    content: '';
+                    background: url('/Agc/public/images/update_icon.png') no-repeat;
+                    position: absolute;
+                    height: 100%;
+                    width: 100%;
+                    background-position-x: 50%;
+                    background-position-y: 40%;
+                    &:hover{
+                        background: url('/Agc/public/images/update_icon_sub.png') no-repeat;
+                        background-position-x: 50%;
+                        background-position-y: 40%;
+                    }
+                }
+            }
+        }
+        .menu_second{
+            .menu-item{
+                margin-top: 1em;
+            }
         }
     }
 }
@@ -407,6 +444,15 @@ header{
 }
 
 .middle_block{
+    position: relative;
+    .csv_output{
+        display: inline-block;
+    }
+    .data_count{
+        position: absolute;
+        right: 0;
+        top: 6px;
+    }
     li.page-item, span.page-link {
         display: none !important;
     }
@@ -424,7 +470,7 @@ header{
         }
     }
 }
-#detail_modal,#answer_modal{
+#detail_modal,#answer_modal,#agency_detail_modal,#agency_add_modal{
     .modal-dialog{
         width:80%;
         margin-top: 0;
@@ -436,7 +482,7 @@ header{
                 text-align: center;
                 padding-bottom: 10px;
             }
-            .edit_btn{
+            .edit_btn,.agency_add_submit{
                 position: absolute;
                 top: 20px;
                 right: 15px;
@@ -480,36 +526,150 @@ header{
     display: none;
     width: 80%;
     margin: 0 auto;
+    .agency_th{
+        width: 20%;
+    }
 }
 
-.faq_block{
-    .col-sm-3{
-        position: relative;
-        top: 10px;
-    }
-    .btn_block{
-        text-align: center;
-    }
-    input#faq_item {
-        width: 100%;
-    }
-    .confirm_btn_block.button_area{
-        display: inline-block;
-        float: left;
-    }
-}
-.faq_list{
-    td.btn_group {
-        width: 4%;
-    }
-    .button_area{
-        display: inline-block;
-        float: left;
-        .edit_btn{
-            margin-left:1em;
+.content-block{
+    .tab_content{
+        padding: 0 0 65px 0;
+        clear: both;
+        overflow: hidden;
+        width: 80%;
+        margin: 0 auto;
+        .panel_block{
+            width: 100%;
+            margin: 0 auto;
+            .panel_content{
+                border: solid 6px;
+                border-color: #863333;
+                border-radius: 15px;
+                background-color: #f3e9e9;
+                margin-bottom: 12px;
+                h2{
+                    font-size: 23px;
+                    font-weight: bold;
+                    padding: 10px 20px;
+                    position: relative;
+                    &:after{
+                        content: '';
+                        background: url('../images/faq/arrow_bottom.png') no-repeat;
+                        position: absolute;
+                        right: 30px;
+                        width: 32px;
+                        height: 32px;
+                        top: 6px;
+                    }
+                }
+                h2.active{
+                    &:after{
+                        content: '';
+                        background: url(../images/faq/arrow_top.png) no-repeat;
+                        position: absolute;
+                        right: 30px;
+                        width: 32px;
+                        height: 32px;
+                        top: 6px;
+                    }
+                }
+                .panel_inner{
+                    display: none;
+                    .elec_qa_container{
+                        width: 96%;
+                        margin: 0 auto;
+                        padding-bottom: 22px;
+                        .faq_list{
+                            border: solid 3px;
+                            border-color: #e0e0e0;
+                            border-radius: 10px;
+                            background-color: white;
+                            margin-bottom: 5px;
+                            .question_item{
+                                position: relative;
+                                cursor: pointer;
+                                &:before{
+                                    content: '';
+                                    width: 22px;
+                                    height: 22px;
+                                    background: url(../images/faq/open_icon.png) no-repeat left top;
+                                    background-size: cover;
+                                    position: absolute;
+                                    right: 20px;
+                                    top: 50%;
+                                    margin-top: -11px;
+                                }
+                                a{
+                                    color: #333;
+                                    text-decoration: none;
+                                    display: block;
+                                    font-size: 1.7rem;
+                                    font-weight: bold;
+                                    line-height: 1.2;
+                                    padding: 20px 50px 20px 70px;
+                                    position: relative;
+                                    pointer-events: none;
+                                    .q_icon{
+                                        position: absolute;
+                                        left: 20px;
+                                        top: 50%;
+                                        margin-top: -17px;
+                                        font-size: 2rem;
+                                        line-height: 1;
+                                        text-align: center;
+                                        font-weight: normal;
+                                        background: #73797b;
+                                        width: 34px;
+                                        height: 34px;
+                                        box-sizing: border-box;
+                                        letter-spacing: -0.05em;
+                                        border-radius: 18px;
+                                        padding-top: 5px;
+                                        color: white;
+                                        padding-right: 3px;
+                                    }
+                                }
+                            }
+                            .open{
+                                &:before{
+                                    content: '';
+                                    width: 22px;
+                                    height: 22px;
+                                    background: url(../images/faq/close_icon.png) no-repeat left top;
+                                    background-size: cover;
+                                    position: absolute;
+                                    right: 20px;
+                                    top: 50%;
+                                    margin-top: -11px;
+                                }
+                            }
+                            .answer_item{
+                                display: none;
+                                position: relative;
+                                padding: 0 20px 0 60px;
+                                .answer_txt{
+                                    padding: 3px 0 20px 4px;
+                                    font-size: 1.6rem;
+                                }
+                                &:after{
+                                    content: '';
+                                    position: absolute;
+                                    width: 30px;
+                                    height: 30px;
+                                    background: url(../images/faq/answer_icon.png) no-repeat left top;
+                                    background-size: cover;
+                                    left: 23px;
+                                    top: 0;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
+
 #answer_modal{
     .modal-dialog{
         position: relative;
