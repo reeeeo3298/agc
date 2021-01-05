@@ -568,6 +568,7 @@ class AgcController extends Controller
 
       $csv = $request->file('csv_file');
       $agency_cd = $request->session()->get('agency_cd');
+      $now_dt = Carbon::now()->format('YmdHis');
       
       
       if(!empty($csv)){//csvが登録されていた場合の処理
@@ -606,20 +607,24 @@ class AgcController extends Controller
             //インサート用データの配列
             $insert_data = [];
             $error_data = '';
+            $mail_add = [];
                                  
             foreach ($rows as $row) {
-                                
+                                                
                 //インポートデータエラーチェック
-                $error_log = $this->validate_csv($row,$count);
+                $error_log = $this->validate_csv($row,$count,$mail_add);
                 
                 if(empty($error_log)){
                     //一度配列に入れる　
-                    $result = $this->get_csv_data($row,$count);
+                    $result = $this->get_csv_data($row,$count,$agency_cd);
                     array_push($insert_data,$result);                    
                 }else{
                     $error_data = $error_data.$error_log;
                 }
-                                    
+                
+                //メールアドレス重複チェック用に配列にアドレスを格納
+                $mail_add[] = $row[25];
+                
                 $count++;                             
             }
 
@@ -639,6 +644,17 @@ class AgcController extends Controller
                 //catchへ飛ばす
                 throw new Exception("データにエラーがありました。ログをご確認ください。");
             }
+            
+            //csvファイルをサーバーに保管
+            $csv_file_name = $agency_cd.'_'.$now_dt;
+            $request->file('csv_file')->storeAs('/csv/'.$agency_cd,$csv_file_name.'.csv');
+            
+            DB::table('csv_history')
+                        ->insert([
+                            'agency_cd' =>  $agency_cd,
+                            'file_name' =>  $csv_file_name,
+                            'upload_dt' =>  Carbon::now()
+                        ]);
                         
             DB::commit();
             return back()->with('flash_message_success', 'インポート完了しました。');
@@ -752,22 +768,100 @@ class AgcController extends Controller
     /**
      * csvエラーチェック
      */
-    private function validate_csv($result,$count){
+    private function validate_csv($result,$count,$mail_add){
 
         $error_log = '';
         
-        //メールアドレスチェック
-        if($result[25] === ""){
+        $mail_address = $result[25];
+        $plan_name = $result[56];
+        $a_capacity = $result[53];
+        $add_no = $result[19];
+        $relation_cd = $result[30];
+        $supply_no = $result[47];
+                
+        //メールアドレス空白チェック
+        if($mail_address === ""){
             $error_log = $count."行目:メールアドレスが入力されていません。\n";
         }
-
+        
+        //メールアドレス重複チェック
+        $unique_result = $this->isUniqueArray($mail_add,$mail_address);
+        
+        if($unique_result === false){
+            $error_log = $error_log.$count."行目:同ファイル内でメールアドレスが重複しています。\n";
+        }
+        
+        //料金メニューとアンペア組み合わせチェック
+        if($plan_name === 'スタンダードプランライト'){
+            if($a_capacity !== '30'){
+                $error_log = $count."行目:料金メニュー名と契約容量の組合せが正しくありません。\n";
+            }
+        }else if($plan_name === 'スタンダードプランS'){
+            if($a_capacity === '30'){
+                $error_log = $count."行目:料金メニュー名と契約容量の組合せが正しくありません。\n";
+            }
+        }
+        
+        //郵便番号にハイフンが入っていないかチェック
+        if(strpos($add_no,'-') !== false){
+            $error_log = $count."行目:郵便番号はハイフン無しでご入力ください。\n";
+        }
+        
+        //需要者と連絡先が同一かのチェック
+        if($relation_cd === ""){
+            $error_log = $count."行目:「需要者と連絡先が同一」を入力してください。\n";
+        }
+        
+        //エリアと料金プラン名チェック
+        $area_cd = $this->area_cd_get($supply_no);
+        switch ($area_cd){
+            case '02':
+                if(strpos($plan_name,'東北') === false){
+                    $error_log = $count."行目:料金プランにエリア名が入力されていません。\n";
+                }
+                break;
+            case '03':
+                break;
+            case '04':
+                if(strpos($plan_name,'中部') === false){
+                    $error_log = $count."行目:料金プランにエリア名が入力されていません。\n";
+                }
+                break;
+            case '05':
+                if(strpos($plan_name,'北陸') === false){
+                    $error_log = $count."行目:料金プランにエリア名が入力されていません。\n";
+                }
+                break;
+            case '06':
+                if(strpos($plan_name,'関西') === false){
+                    $error_log = $count."行目:料金プランにエリア名が入力されていません。\n";
+                }
+                break;
+            case '07':
+                if(strpos($plan_name,'中国') === false){
+                    $error_log = $count."行目:料金プランにエリア名が入力されていません。\n";
+                }
+                break;
+            case '08':
+                if(strpos($plan_name,'四国') === false){
+                    $error_log = $count."行目:料金プランにエリア名が入力されていません。\n";
+                }
+                break;
+            case '09':
+                if(strpos($plan_name,'九州') === false){
+                    $error_log = $count."行目:料金プランにエリア名が入力されていません。\n";
+                }
+                break;
+        }
+        
+        
         return $error_log;
     }
     
     /**
      * csvデータ取得
      */
-    private function get_csv_data($row,$count)
+    private function get_csv_data($row,$count,$agency_cd)
     {
         //受付Noの最大値取得
         $no = DB::table('t_data')
@@ -826,7 +920,7 @@ class AgcController extends Controller
             'plan_name' => $row[56],
             'payment' => $row[57],
             'campaign_cd' => $row[72],
-            'agency_cd' => $row[71],
+            'agency_cd' => $agency_cd,
             'memo' => $row[73]
         );
         return $result;
@@ -1108,6 +1202,36 @@ class AgcController extends Controller
                     ->get();
         
         return $result;
+    }
+    
+    /**
+     * 配列内の全ての値が一意かチェックする
+     */
+    private function isUniqueArray ($mail_add,$mail_address) {
+      
+        $unique_flg = true;
+
+        foreach ($mail_add as $add){
+            
+            //同じアドレスがあればfalseで返す
+            if($add === $mail_address){
+                $unique_flg = false;
+                return $unique_flg;
+            }
+        }
+        
+        return $unique_flg;
+      
+    }
+    
+    /**
+     * エリアコード取得
+     */
+    private function area_cd_get($supply_no){
+        
+        $area_cd = substr($supply_no, 0, 2);        
+        
+        return $area_cd;
     }
     
 }
