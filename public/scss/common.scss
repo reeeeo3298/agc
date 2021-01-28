@@ -252,6 +252,22 @@ header{
                     }
                 }
             }
+            #csv_download{
+                a{
+                    content: '';
+                    background: url('/Agc/public/images/csv_download.png') no-repeat;
+                    position: absolute;
+                    height: 100%;
+                    width: 100%;
+                    background-position-x: 50%;
+                    background-position-y: 40%;
+                    &:hover{
+                        background: url('/Agc/public/images/csv_download_sub.png') no-repeat;
+                        background-position-x: 50%;
+                        background-position-y: 40%;
+                    }
+                }
+            }
         }
         .menu_second{
             .menu-item{

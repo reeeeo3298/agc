@@ -48,6 +48,16 @@ $('.menu-item#update_menu').hover(
       $(this).find('span').css('color','');
   }
 );
+$('.menu-item#csv_download').hover(
+  function(){
+      $(this).css('border-color','#f1d655');
+      $(this).find('span').css('color','#f1d655');
+  },
+  function(){
+      $(this).css('border-color','');
+      $(this).find('span').css('color','');
+  }
+);
 
 $(function(){
     

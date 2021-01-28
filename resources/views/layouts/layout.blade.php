@@ -25,7 +25,8 @@
                   <li><a href="/Agc/faq">よくある質問</a></li>
                   @if(Session::has('admin_flg'))
                   <li><a href="/Agc/agency_master">代理店マスタ</a></li>
-                  <li><a href="/Agc/update">データ更新画面</a></li>
+                  <li><a href="/Agc/update">データ更新</a></li>
+                  <li><a href="/Agc/enesap">ENESAP用</a></li>
                   @endif
                 </ul>
             </div>

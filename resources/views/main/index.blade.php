@@ -16,7 +16,7 @@
         <ul class="menu-list menu_second">
             <li class="menu-item" id="agency_master"><a href="/Agc/agency_master"><span>代理店マスタ</span></a></li>
             <li class="menu-item" id="update_menu"><a href="/Agc/update"><span>データ更新</span></a></li>
-            <!--<li class="menu-item" id="faq"><a href="/Agc/faq"><span>FAQ</span></a></li>-->
+            <li class="menu-item" id="csv_download"><a href="/Agc/enesap"><span>ENESAP用</span></a></li>
         </ul>
         @endif
         <!-- <ul class="menu-list2">
