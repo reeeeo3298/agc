@@ -31,11 +31,20 @@ Route::get('/import','AgcController@import_index');
 //データ更新画面表示
 Route::get('/update','AgcController@update_index');
 
-//データ更新画面表示
+//データ更新処理
 Route::post('/data_update','AgcController@update_input');
 
 //よくある質問画面表示
 Route::get('/faq','AgcController@faq_index');
+
+//ENESAP用csvデータダウンロード画面表示
+Route::get('/enesap','AgcController@enesap_index');
+
+//ENESAP用csvデータダウンロード画面表示(代理店検索)
+Route::get('/agency_view','AgcController@agency_view_index');
+
+//ENESAP用csvデータダウンロード処理
+Route::post('/download','AgcController@enesap_input');
 
 //代理店マスタ画面表示
 Route::get('/agency_master','AgcController@agency_master_index');

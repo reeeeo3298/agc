@@ -115,6 +115,60 @@ class AgcController extends Controller
     }
     
     /**
+     * ENESAP用csvデータダウンロード画面表示
+     */
+    public function enesap_index(Request $request){
+        
+        //代理店毎のデータ取得
+        $agency_cd = $request->session()->get('agency_cd');
+        
+        //セッション切れチェック  
+        if($agency_cd == null){
+            
+            return redirect('/')->with('message','セッション有効期限が切れました。再度ログインし直してください。');
+            
+        }else{
+            
+            $results = DB::table('csv_history')
+                        ->get();
+            
+            return view('enesap.index',compact('results'));
+        }
+        
+    }
+    
+    /**
+     * 代理店表示ボタン押下
+     */
+    public function agency_view_index(Request $request){
+        
+        $agency_cd = $request->input('agency_type');
+        
+        dd($agency_cd);
+        
+    }
+    
+    /**
+     * ENESAP用csvダウンロード処理
+     */
+    public function enesap_input(Request $request){
+        
+        $download_file_name = $request->input('download_file');
+        $file_name = $request->input('file_name');
+        $csv_agency_cd = $request->input('csv_agency_cd');
+        $pathToFile = '/csv/'.$csv_agency_cd.'/'.$download_file_name;
+        $headers = ['Content-Type' => 'text/plain'];
+        
+        DB::table('csv_history')
+                ->where('file_name',$file_name)
+                ->update([
+                    'download_dt'   =>  Carbon::now()
+                ]);
+        
+        return response()->download(\Storage::path($pathToFile), $download_file_name, $headers);
+    }
+    
+    /**
      * よくある質問画面表示
      */
     public function faq_index(Request $request){
